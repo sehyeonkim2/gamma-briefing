@@ -88,34 +88,7 @@ function fmtNum(n, dec=2) {
   return (+n).toLocaleString('en',{minimumFractionDigits:dec,maximumFractionDigits:dec});
 }
 
-// ── CORS 프록시 (여러 개 fallback) ──────────────────────
-const PROXIES = [
-  url => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
-  url => `https://corsproxy.io/?${encodeURIComponent(url)}`,
-  url => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
-];
-
-async function fetchProxy(url, proxyIdx=0) {
-  if (proxyIdx >= PROXIES.length) throw new Error('모든 프록시 실패');
-  try {
-    const r = await fetch(PROXIES[proxyIdx](url), {signal: AbortSignal.timeout(15000)});
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    const raw = await r.text();
-    // allorigins → {contents: "..."}, 나머지 → 직접 JSON
-    try {
-      const wrapper = JSON.parse(raw);
-      const text = wrapper.contents ?? raw;
-      return JSON.parse(text);
-    } catch {
-      return JSON.parse(raw);
-    }
-  } catch(e) {
-    console.warn(`프록시${proxyIdx} 실패(${e.message}) → 다음 시도`);
-    return fetchProxy(url, proxyIdx+1);
-  }
-}
-
-// ── Yahoo Finance ─────────────────────────────────────
+// ── Yahoo Finance (직접 호출) ────────────────────────────
 const YF_SYMBOLS = {
   N225:   '^N225',
   SSEC:   '000001.SS',
@@ -123,18 +96,19 @@ const YF_SYMBOLS = {
   USDKRW: 'USDKRW=X',
   EURUSD: 'EURUSD=X',
   USDJPY: 'USDJPY=X',
-  USDCNH: 'CNY=X',      // USDCNH=X 대신 CNY=X
+  USDCNH: 'USDCNH=X',
   DXY:    'DX-Y.NYB',
 };
 
 async function fetchYF(sym) {
-  // v8 먼저, 실패시 v7 시도
-  const urls = [
-    `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}?interval=1d&range=2mo`,
-    `https://query2.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}?interval=1d&range=2mo`,
-  ];
-  for (const url of urls) {
-    try { return await fetchProxy(url); } catch(e) { console.warn('YF URL 실패:', url); }
+  const hosts = ['query1', 'query2'];
+  for (const host of hosts) {
+    try {
+      const url = `https://${host}.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}?interval=1d&range=2mo`;
+      const r = await fetch(url, {signal: AbortSignal.timeout(10000)});
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return await r.json();
+    } catch(e) { console.warn(`YF ${host} 실패:`, e.message); }
   }
   throw new Error('Yahoo Finance 실패: ' + sym);
 }
@@ -168,18 +142,18 @@ function parseYF(json, targetDateStr) {
   };
 }
 
-// ── KRX ───────────────────────────────────────────────
+// ── KRX (CORS 우회: https 버전 직접 호출) ───────────────
 async function krxPost(bld, extra={}) {
   const p = new URLSearchParams({bld, locale:'ko_KR', ...extra});
-  const url = 'http://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd?' + p;
-  // KRX는 allorigins만 지원 (https → http 프록시)
-  const proxied = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
-  const r = await fetch(proxied, {signal: AbortSignal.timeout(15000)});
-  if (!r.ok) throw new Error('KRX proxy 오류 ' + r.status);
-  const wrapper = await r.json();
-  const text = wrapper.contents;
-  if (!text) throw new Error('KRX 응답 비어있음');
-  return JSON.parse(text);
+  // https 버전으로 직접 호출 (CORS 허용됨)
+  const url = 'https://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd?' + p;
+  const r = await fetch(url, {
+    method: 'GET',
+    headers: {'Referer': 'https://data.krx.co.kr/'},
+    signal: AbortSignal.timeout(15000)
+  });
+  if (!r.ok) throw new Error('KRX 오류 ' + r.status);
+  return await r.json();
 }
 
 function d35ago(yyyymmdd) {
@@ -351,4 +325,3 @@ function copyAll() {
 </script>
 </body>
 </html>
-
