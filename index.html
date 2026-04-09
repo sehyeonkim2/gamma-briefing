@@ -5,60 +5,52 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GAMMA 시장 데이터</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, 'Malgun Gothic', sans-serif; background: #f4f6f9; color: #111; }
-  .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
-  h1 { font-size: 18px; font-weight: 700; color: #1F3864; margin-bottom: 4px; }
-  .subtitle { font-size: 13px; color: #666; margin-bottom: 20px; }
-
-  .controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
-  input[type=date] { font-size: 13px; padding: 7px 10px; border: 1px solid #ccc; border-radius: 6px; background: #fff; }
-  .btn { font-size: 13px; padding: 7px 16px; border-radius: 6px; cursor: pointer; border: none; font-weight: 500; }
-  .btn-primary { background: #1F3864; color: #fff; }
-  .btn-primary:hover { background: #2E5496; }
-  .btn-copy { background: #fff; color: #333; border: 1px solid #ccc; }
-  .btn-copy:hover { background: #f0f0f0; }
-  .status { font-size: 12px; color: #666; }
-
-  .section { margin-bottom: 20px; }
-  .section-title { font-size: 11px; font-weight: 600; color: #666; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px; }
-
-  table { width: 100%; border-collapse: collapse; font-size: 12.5px; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
-  th { background: #1F3864; color: #fff; padding: 7px 10px; text-align: center; font-size: 12px; font-weight: 600; }
-  th.L { text-align: left; }
-  td { padding: 6px 10px; text-align: center; border-bottom: 1px solid #f0f0f0; }
-  td.L { text-align: left; }
-  tr:last-child td { border-bottom: none; }
-  tr:nth-child(even) td { background: #fafafa; }
-  .sub th, tr.sub td { background: #D6E4F0 !important; color: #1F3864; font-weight: 600; font-size: 12px; }
-  .gap { width: 12px; background: transparent !important; border: none !important; padding: 0 !important; }
-  .pos { color: #C00000; font-weight: 600; }
-  .neg { color: #215732; font-weight: 600; }
-
-  .note { font-size: 11px; color: #999; margin-top: 8px; }
-  .error-box { background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 12px; font-size: 13px; color: #664d03; margin-top: 8px; }
-  .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid #ccc; border-top-color: #1F3864; border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle; margin-right: 6px; }
-  @keyframes spin { to { transform: rotate(360deg); } }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, 'Malgun Gothic', sans-serif; background: #f4f6f9; color: #111; }
+.container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+h1 { font-size: 18px; font-weight: 700; color: #1F3864; margin-bottom: 4px; }
+.subtitle { font-size: 13px; color: #666; margin-bottom: 20px; }
+.controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+input[type=date] { font-size: 13px; padding: 7px 10px; border: 1px solid #ccc; border-radius: 6px; background: #fff; }
+.btn { font-size: 13px; padding: 7px 16px; border-radius: 6px; cursor: pointer; border: none; font-weight: 500; }
+.btn-primary { background: #1F3864; color: #fff; }
+.btn-primary:hover { background: #2E5496; }
+.btn-copy { background: #fff; color: #333; border: 1px solid #ccc; }
+.btn-copy:hover { background: #f0f0f0; }
+.status { font-size: 12px; color: #666; }
+.section { margin-bottom: 20px; }
+.section-title { font-size: 11px; font-weight: 600; color: #666; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px; }
+table { width: 100%; border-collapse: collapse; font-size: 12.5px; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+th { background: #1F3864; color: #fff; padding: 7px 10px; text-align: center; font-size: 12px; font-weight: 600; }
+th.L { text-align: left; }
+td { padding: 6px 10px; text-align: center; border-bottom: 1px solid #f0f0f0; }
+td.L { text-align: left; }
+tr:last-child td { border-bottom: none; }
+tr:nth-child(even) td { background: #fafafa; }
+.sub th { background: #D6E4F0; color: #1F3864; }
+.gap { width: 10px; background: #f4f6f9 !important; border: none !important; padding: 0 !important; }
+.pos { color: #C00000; font-weight: 600; }
+.neg { color: #215732; font-weight: 600; }
+.spinner { display: inline-block; width: 13px; height: 13px; border: 2px solid #ccc; border-top-color: #1F3864; border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle; margin-right: 5px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.note { font-size: 11px; color: #999; margin-top: 8px; }
 </style>
 </head>
 <body>
 <div class="container">
   <h1>GAMMA Morning Market Briefing</h1>
-  <p class="subtitle">KRX + Yahoo Finance 자동 수집 — 표 복사 후 Word에 붙여넣기</p>
-
+  <p class="subtitle">네이버 금융 자동 수집 — 표 복사 후 Word에 붙여넣기</p>
   <div class="controls">
     <input type="date" id="dt">
     <button class="btn btn-primary" onclick="run()">데이터 불러오기</button>
     <button class="btn btn-copy" onclick="copyAll()">표 전체 복사</button>
     <span class="status" id="st"></span>
   </div>
-
   <div id="out"></div>
 </div>
 
 <script>
-// ── 날짜 초기화 (전 영업일) ───────────────────────────
-(function(){
+(function() {
   const d = new Date(), day = d.getDay();
   d.setDate(d.getDate() - (day===1?3 : day===0?2 : 1));
   document.getElementById('dt').value = d.toISOString().slice(0,10);
@@ -68,271 +60,235 @@ const $st = document.getElementById('st');
 const $out = document.getElementById('out');
 function setStatus(s) { $st.innerHTML = s; }
 
-// ── 부호 색상 ─────────────────────────────────────────
 function cc(v) {
   const s = String(v??'').trim();
   return s.startsWith('+') ? 'pos' : s.startsWith('-') ? 'neg' : '';
 }
-function td(v, left) {
+function tdEl(v, left) {
   return `<td class="${[left?'L':'', cc(v)].filter(Boolean).join(' ')}">${v??'-'}</td>`;
 }
-function th(v, left, cs) {
+function thEl(v, left, cs) {
   return `<th class="${left?'L':''}"${cs?` colspan="${cs}"`:''} >${v}</th>`;
 }
-function fmtChg(cur, prev, dec=2) {
-  if (!cur || !prev) return 'N/A';
+function fmtChg(cur, prev, dec) {
+  if (cur==null || prev==null) return 'N/A';
   const d = +(cur - prev).toFixed(dec);
-  return (d>=0?'+':'') + d.toLocaleString('en',{minimumFractionDigits:dec,maximumFractionDigits:dec});
+  return (d>=0?'+':'') + d.toLocaleString('en', {minimumFractionDigits:dec, maximumFractionDigits:dec});
 }
-function fmtNum(n, dec=2) {
-  return (+n).toLocaleString('en',{minimumFractionDigits:dec,maximumFractionDigits:dec});
+function fmtNum(n, dec) {
+  if (n==null) return 'N/A';
+  return (+n).toLocaleString('en', {minimumFractionDigits:dec, maximumFractionDigits:dec});
 }
-
-// ── Yahoo Finance (직접 호출) ────────────────────────────
-const YF_SYMBOLS = {
-  N225:   '^N225',
-  SSEC:   '000001.SS',
-  FTSE:   '^FTSE',
-  USDKRW: 'USDKRW=X',
-  EURUSD: 'EURUSD=X',
-  USDJPY: 'USDJPY=X',
-  USDCNH: 'USDCNH=X',
-  DXY:    'DX-Y.NYB',
-};
-
-async function fetchYF(sym) {
-  const hosts = ['query1', 'query2'];
-  for (const host of hosts) {
-    try {
-      const url = `https://${host}.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}?interval=1d&range=2mo`;
-      const r = await fetch(url, {signal: AbortSignal.timeout(10000)});
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      return await r.json();
-    } catch(e) { console.warn(`YF ${host} 실패:`, e.message); }
-  }
-  throw new Error('Yahoo Finance 실패: ' + sym);
+function toDateStr(yyyymmdd) {
+  return yyyymmdd.slice(0,4)+'-'+yyyymmdd.slice(4,6)+'-'+yyyymmdd.slice(6,8);
 }
-
-function parseYF(json, targetDateStr) {
-  const res = json?.chart?.result?.[0];
-  if (!res) return null;
-  const ts = res.timestamp || [];
-  const closes = res.indicators?.quote?.[0]?.close || [];
-
-  // targetDate → epoch (KST 자정 기준)
-  const [y,m,d] = [targetDateStr.slice(0,4), targetDateStr.slice(4,6), targetDateStr.slice(6,8)];
-  const tgt = new Date(`${y}-${m}-${d}T00:00:00+09:00`).getTime() / 1000;
-
-  // 타겟일 이하 가장 최신 인덱스
-  let bi = -1;
-  for (let i=0; i<ts.length; i++) { if (ts[i] <= tgt + 86400) bi = i; }
-  if (bi < 0 || closes[bi] == null) return null;
-
-  const close = closes[bi];
-  const prev1d = bi>0 ? closes[bi-1] : close;
-  const prev1w = bi>=5 ? closes[bi-5] : closes[0];
-  const prev1m = closes[0];
-  const dec = close < 10 ? 4 : close < 100 ? 3 : close < 10000 ? 2 : 0;
-
-  return {
-    val: fmtNum(close, dec),
-    d1:  fmtChg(close, prev1d, dec),
-    w1:  fmtChg(close, prev1w, dec),
-    m1:  fmtChg(close, prev1m, dec),
-  };
-}
-
-// ── 네이버 금융 KOSPI/KOSDAQ ─────────────────────────────
-async function fetchNaverIndex(code, endDate) {
-  // endDate: YYYYMMDD
-  const d = new Date(endDate.slice(0,4)+'-'+endDate.slice(4,6)+'-'+endDate.slice(6,8));
-  const start = new Date(d);
-  start.setDate(start.getDate() - 40);
-  const startStr = start.toISOString().slice(0,10).replace(/-/g,'');
-  const url = `https://m.stock.naver.com/api/index/${code}/price?startTime=${startStr}&endTime=${endDate}&timeframe=day`;
-  const r = await fetch(url, {signal: AbortSignal.timeout(10000)});
-  if (!r.ok) throw new Error('Naver ' + code + ' 오류 ' + r.status);
-  return await r.json();
-}
-
-function parseNaverIndex(rows, targetDate) {
-  if (!rows || !rows.length) return {index:'N/A','1D':'N/A','1W':'N/A','1M':'N/A'};
-  // rows: [{localDate, closePrice, ...}, ...] 최신순 정렬
-  rows.sort((a,b) => b.localDate.localeCompare(a.localDate));
-  // 타겟 날짜 이하 최신
-  const filtered = rows.filter(r => r.localDate <= targetDate);
-  if (!filtered.length) return {index:'N/A','1D':'N/A','1W':'N/A','1M':'N/A'};
-  const base = parseFloat(filtered[0].closePrice);
-  const d1   = filtered[1] ? parseFloat(filtered[1].closePrice) : base;
-  const w1   = filtered[4] ? parseFloat(filtered[4].closePrice) : base;
-  const m1   = filtered[filtered.length-1] ? parseFloat(filtered[filtered.length-1].closePrice) : base;
-  const fc = (a,b) => { const d=+(a-b).toFixed(2); return (d>=0?'+':'')+d.toLocaleString('en',{minimumFractionDigits:2}); };
-  return { index: base.toLocaleString('ko',{minimumFractionDigits:2}), '1D':fc(base,d1), '1W':fc(base,w1), '1M':fc(base,m1) };
-}
-
-// ── KRX 거래대금/순매수 (allorigins 프록시) ──────────────
-async function krxPost(bld, extra={}) {
-  const p = new URLSearchParams({bld, locale:'ko_KR', ...extra});
-  const url = 'https://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd?' + p;
-  const proxied = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
-  const r = await fetch(proxied, {signal: AbortSignal.timeout(15000)});
-  if (!r.ok) throw new Error('KRX proxy 오류 ' + r.status);
-  const wrapper = await r.json();
-  if (!wrapper.contents) throw new Error('KRX 빈 응답');
-  return JSON.parse(wrapper.contents);
-}
-
-function d35ago(yyyymmdd) {
-  const d = new Date(`${yyyymmdd.slice(0,4)}-${yyyymmdd.slice(4,6)}-${yyyymmdd.slice(6,8)}`);
-  d.setDate(d.getDate() - 35);
+function shiftDate(yyyymmdd, days) {
+  const d = new Date(toDateStr(yyyymmdd));
+  d.setDate(d.getDate() + days);
   return d.toISOString().slice(0,10).replace(/-/g,'');
 }
 
-function parseKRXIndex(res) {
-  const rows = (res.output || res.OutBlock_1 || [])
-    .sort((a,b) => (b.TRD_DD||'').localeCompare(a.TRD_DD||''));
-  if (!rows.length) return {index:'N/A','1D':'N/A','1W':'N/A','1M':'N/A'};
-  const c = v => parseFloat((v||'0').replace(/,/g,''));
-  const base = c(rows[0].CLSPRC_IDX);
-  const d1 = rows[1] ? c(rows[1].CLSPRC_IDX) : base;
-  const w1 = rows[4] ? c(rows[4].CLSPRC_IDX) : base;
-  const m1 = c(rows[rows.length-1].CLSPRC_IDX);
-  const fc = (a,b) => { const d=+(a-b).toFixed(2); return (d>=0?'+':'')+d.toLocaleString('en',{minimumFractionDigits:2}); };
-  return { index: base.toLocaleString('ko',{minimumFractionDigits:2}), '1D':fc(base,d1), '1W':fc(base,w1), '1M':fc(base,m1) };
+// 네이버 지수 코드
+const IDX_CODE = {KOSPI:'KOSPI', KOSDAQ:'KOSDAQ', N225:'NI225', SSEC:'SHCOMP', FTSE:'UKX', DXY:'USDX'};
+// 네이버 환율 Reuters 코드
+const FX_CODE  = {USDKRW:'FX_USDKRW', EURUSD:'FX_EURUSD', USDJPY:'FX_USDJPY', USDCNH:'FX_USDCNH'};
+// 소수점 자리수
+const DEC = {KOSPI:2, KOSDAQ:2, N225:0, SSEC:2, FTSE:0, DXY:3, USDKRW:2, EURUSD:4, USDJPY:2, USDCNH:4};
+
+async function get(url) {
+  const r = await fetch(url, {signal: AbortSignal.timeout(12000)});
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  return r.json();
 }
 
-function parseMkt(kTrd, qTrd, kO, qO) {
-  const getInv = (res, kw) => {
-    const row = (res.output||res.OutBlock_1||[]).find(r=>(r.INVST_TP_NM||'').includes(kw)) || {};
-    const v = parseInt((row.NETBUY_TRDVAL||'0').replace(/,/g,'')) || 0;
-    const b = Math.round(v/1e8);
-    return (b>=0?'+':'') + b.toLocaleString();
-  };
-  const ud = res => {
-    let u=0, d=0;
-    (res.output||res.OutBlock_1||[]).forEach(r => {
-      const f = parseFloat(r.FLUC_RT||'0');
-      if (f>0) u++; else if (f<0) d++;
-    });
-    return {u, d};
-  };
-  const ku=ud(kO), qu=ud(qO);
+function parseIdxRows(rows, date, dec) {
+  if (!rows?.length) return null;
+  const sorted = [...rows].sort((a,b) => b.localDate.localeCompare(a.localDate));
+  const data = sorted.filter(r => r.localDate <= date);
+  if (!data.length) return null;
+  const base = parseFloat(data[0].closePrice);
+  const d1 = data[1] ? parseFloat(data[1].closePrice) : base;
+  const w1 = data[4] ? parseFloat(data[4].closePrice) : base;
+  const m1 = parseFloat(data[data.length-1].closePrice);
   return {
-    kospi_adv:ku.u, kospi_dec:ku.d, kosdaq_adv:qu.u, kosdaq_dec:qu.d,
-    kospi_ind:getInv(kTrd,'개인'), kospi_for:getInv(kTrd,'외국인'), kospi_ins:getInv(kTrd,'기관'),
-    kosdaq_ind:getInv(qTrd,'개인'), kosdaq_for:getInv(qTrd,'외국인'), kosdaq_ins:getInv(qTrd,'기관'),
+    index: base.toLocaleString('ko', {minimumFractionDigits:dec, maximumFractionDigits:dec}),
+    '1D': fmtChg(base,d1,dec), '1W': fmtChg(base,w1,dec), '1M': fmtChg(base,m1,dec)
   };
 }
 
-const ETF_KW = ['ETF','KODEX','TIGER','KBSTAR','HANARO','ARIRANG','KOSEF','MASTER','ACE'];
+function parseFXRows(rows, date, dec) {
+  if (!rows?.length) return null;
+  const sorted = [...rows].sort((a,b) => b.localDate.localeCompare(a.localDate));
+  const data = sorted.filter(r => r.localDate <= date);
+  if (!data.length) return null;
+  const base = parseFloat(data[0].closePrice);
+  const d1 = data[1] ? parseFloat(data[1].closePrice) : base;
+  const w1 = data[4] ? parseFloat(data[4].closePrice) : base;
+  const m1 = parseFloat(data[data.length-1].closePrice);
+  return {
+    spot: fmtNum(base, dec),
+    '1D': fmtChg(base,d1,dec), '1W': fmtChg(base,w1,dec), '1M': fmtChg(base,m1,dec)
+  };
+}
+
+const ETF_KW = ['ETF','KODEX','TIGER','KBSTAR','HANARO','ARIRANG','KOSEF','MASTER','ACE','PLUS','SOL'];
 function filterETF(list) {
   return (list||[])
-    .filter(r => !ETF_KW.some(k=>(r.ISU_ABBRV||r.ISU_NM||'').toUpperCase().includes(k)))
-    .slice(0,6).map(r => r.ISU_ABBRV||r.ISU_NM||'');
+    .filter(r => !ETF_KW.some(k => ((r.stockName||r.name||'')).toUpperCase().includes(k)))
+    .slice(0,6).map(r => r.stockName||r.name||'');
 }
 
-// ── 메인 실행 ─────────────────────────────────────────
 async function run() {
   const date = document.getElementById('dt').value.replace(/-/g,'');
   if (!date) { alert('날짜를 선택하세요'); return; }
   $out.innerHTML = '';
   setStatus('<span class="spinner"></span>수집 중...');
 
+  const from = shiftDate(date, -45);
   const errors = [];
-  const indices = {}, currencies = {};
 
-  // 1. Yahoo Finance 병렬
-  setStatus('<span class="spinner"></span>해외 지수 / 환율 수집 중...');
-  const yfKeys = Object.keys(YF_SYMBOLS);
-  const yfRes = await Promise.allSettled(yfKeys.map(k => fetchYF(YF_SYMBOLS[k])));
-
-  yfRes.forEach((r, i) => {
-    const key = yfKeys[i];
-    const isIdx = ['N225','SSEC','FTSE'].includes(key);
-    if (r.status === 'fulfilled') {
-      const p = parseYF(r.value, date);
-      if (p) {
-        if (isIdx) indices[key] = {index:p.val,'1D':p.d1,'1W':p.w1,'1M':p.m1};
-        else       currencies[key] = {spot:p.val,'1D':p.d1,'1W':p.w1,'1M':p.m1};
-      } else { errors.push(key); if(isIdx) indices[key]={index:'N/A','1D':'N/A','1W':'N/A','1M':'N/A'}; else currencies[key]={spot:'N/A','1D':'N/A','1W':'N/A','1M':'N/A'}; }
+  // ── 1. 지수 (네이버) ───────────────────────────
+  setStatus('<span class="spinner"></span>지수 수집 중...');
+  const idxKeys = Object.keys(IDX_CODE);
+  const idxRes  = await Promise.allSettled(
+    idxKeys.map(k => get(`https://m.stock.naver.com/api/index/${IDX_CODE[k]}/price?startTime=${from}&endTime=${date}&timeframe=day`))
+  );
+  const indices = {};
+  idxKeys.forEach((k, i) => {
+    const dec = DEC[k] ?? 2;
+    if (idxRes[i].status === 'fulfilled') {
+      const parsed = parseIdxRows(idxRes[i].value, date, dec);
+      indices[k] = parsed || {index:'N/A','1D':'N/A','1W':'N/A','1M':'N/A'};
+      if (!parsed) errors.push(k);
     } else {
-      errors.push(key);
-      if(isIdx) indices[key]={index:'N/A','1D':'N/A','1W':'N/A','1M':'N/A'};
-      else currencies[key]={spot:'N/A','1D':'N/A','1W':'N/A','1M':'N/A'};
+      indices[k] = {index:'N/A','1D':'N/A','1W':'N/A','1M':'N/A'};
+      errors.push(k);
     }
   });
 
-  // 2. KOSPI/KOSDAQ → 네이버 금융
-  setStatus('<span class="spinner"></span>KOSPI/KOSDAQ 수집 중...');
-  const [kNav, qNav] = await Promise.allSettled([
-    fetchNaverIndex('KOSPI', date),
-    fetchNaverIndex('KOSDAQ', date),
+  // DXY: 지수에서 환율 섹션으로 이동
+  const dxyData = indices['DXY'];
+  delete indices['DXY'];
+
+  // ── 2. 환율 (네이버) ───────────────────────────
+  setStatus('<span class="spinner"></span>환율 수집 중...');
+  const fxKeys = Object.keys(FX_CODE);
+  const fxRes  = await Promise.allSettled(
+    fxKeys.map(k => get(`https://m.stock.naver.com/front-api/v1/marketIndex/exchangeHistory?category=exchange&reutersCode=${FX_CODE[k]}&startTime=${from}&endTime=${date}&timeframe=day`))
+  );
+  const currencies = {};
+  fxKeys.forEach((k, i) => {
+    const dec = DEC[k] ?? 4;
+    if (fxRes[i].status === 'fulfilled') {
+      const rows = fxRes[i].value?.result?.list ?? fxRes[i].value?.list ?? fxRes[i].value ?? [];
+      const parsed = parseFXRows(rows, date, dec);
+      currencies[k] = parsed || {spot:'N/A','1D':'N/A','1W':'N/A','1M':'N/A'};
+      if (!parsed) errors.push(k);
+    } else {
+      currencies[k] = {spot:'N/A','1D':'N/A','1W':'N/A','1M':'N/A'};
+      errors.push(k);
+    }
+  });
+  // DXY를 환율에 추가
+  currencies['DXY'] = dxyData
+    ? {spot: dxyData.index, '1D': dxyData['1D'], '1W': dxyData['1W'], '1M': dxyData['1M']}
+    : {spot:'N/A','1D':'N/A','1W':'N/A','1M':'N/A'};
+
+  // ── 3. 한국 시장 ───────────────────────────────
+  setStatus('<span class="spinner"></span>한국 시장 수집 중...');
+  const dStr = toDateStr(date);
+  const [mktR, kudR, qudR, forR, insR, npsR] = await Promise.allSettled([
+    get(`https://m.stock.naver.com/front-api/v1/marketIndex/investorTradingByDate?date=${dStr}`),
+    get(`https://m.stock.naver.com/front-api/v1/stock/market/updown?market=KOSPI&date=${dStr}`),
+    get(`https://m.stock.naver.com/front-api/v1/stock/market/updown?market=KOSDAQ&date=${dStr}`),
+    get(`https://m.stock.naver.com/front-api/v1/stock/investorRanking?investorType=3&tradeType=1&market=ALL&date=${dStr}&page=1&pageSize=20`),
+    get(`https://m.stock.naver.com/front-api/v1/stock/investorRanking?investorType=4&tradeType=1&market=ALL&date=${dStr}&page=1&pageSize=20`),
+    get(`https://m.stock.naver.com/front-api/v1/stock/investorRanking?investorType=7&tradeType=1&market=ALL&date=${dStr}&page=1&pageSize=20`),
   ]);
-  indices['KOSPI']  = kNav.status==='fulfilled' ? parseNaverIndex(kNav.value, date) : {index:'N/A','1D':'N/A','1W':'N/A','1M':'N/A'};
-  indices['KOSDAQ'] = qNav.status==='fulfilled' ? parseNaverIndex(qNav.value, date) : {index:'N/A','1D':'N/A','1W':'N/A','1M':'N/A'};
-  if (kNav.status!=='fulfilled') errors.push('KOSPI');
-  if (qNav.status!=='fulfilled') errors.push('KOSDAQ');
 
-  // 3. KRX 거래대금 + 순매수 병렬
-  setStatus('<span class="spinner"></span>KRX 거래대금/순매수 수집 중...');
-  const [kT,qT,kO,qO,fR,iR,nR] = await Promise.allSettled([
-    krxPost('dbms/MDC/STAT/standard/MDCSTAT02302',{mktId:'STK',strtDd:date,endDd:date,share:'3',money:'3'}),
-    krxPost('dbms/MDC/STAT/standard/MDCSTAT02302',{mktId:'KSQ',strtDd:date,endDd:date,share:'3',money:'3'}),
-    krxPost('dbms/MDC/STAT/standard/MDCSTAT02401',{mktId:'STK',strtDd:date,endDd:date}),
-    krxPost('dbms/MDC/STAT/standard/MDCSTAT02401',{mktId:'KSQ',strtDd:date,endDd:date}),
-    krxPost('dbms/MDC/STAT/standard/MDCSTAT03901',{mktId:'ALL',invstTpCd:'4000',strtDd:date,endDd:date,money:'1'}),
-    krxPost('dbms/MDC/STAT/standard/MDCSTAT03901',{mktId:'ALL',invstTpCd:'3000',strtDd:date,endDd:date,money:'1'}),
-    krxPost('dbms/MDC/STAT/standard/MDCSTAT03901',{mktId:'ALL',invstTpCd:'3020',strtDd:date,endDd:date,money:'1'}),
-  ]);
+  const km = {};
+  // 거래대금
+  if (mktR.status === 'fulfilled') {
+    const list = mktR.value?.result?.list ?? mktR.value?.list ?? [];
+    const fmtV = v => {
+      const n = Math.round((+(v||0)) / 1e8);
+      return (n>=0?'+':'') + n.toLocaleString();
+    };
+    const find = (mkt, inv) => list.find(r =>
+      String(r.market||r.marketType||'').includes(mkt) &&
+      String(r.investorType||r.investorName||'').includes(inv)
+    );
+    const kp = find('KOSPI',''); // fallback
+    const kq = find('KOSDAQ','');
+    // 네이버 API 응답 구조에 따라 분기
+    const getAmt = (mkt, inv) => {
+      const row = list.find(r =>
+        String(r.market||'').toUpperCase().includes(mkt) &&
+        String(r.investorType||r.investorName||'').includes(inv)
+      );
+      return row ? fmtV(row.netBuyAmount ?? row.netBuy ?? 0) : '-';
+    };
+    km.kospi_ind  = getAmt('KOSPI','개인');
+    km.kospi_for  = getAmt('KOSPI','외국');
+    km.kospi_ins  = getAmt('KOSPI','기관');
+    km.kosdaq_ind = getAmt('KOSDAQ','개인');
+    km.kosdaq_for = getAmt('KOSDAQ','외국');
+    km.kosdaq_ins = getAmt('KOSDAQ','기관');
+  }
+  // 상승/하락
+  if (kudR.status === 'fulfilled') {
+    const d = kudR.value?.result ?? kudR.value ?? {};
+    km.kospi_adv = d.upCount ?? d.up ?? '-';
+    km.kospi_dec = d.downCount ?? d.down ?? '-';
+  }
+  if (qudR.status === 'fulfilled') {
+    const d = qudR.value?.result ?? qudR.value ?? {};
+    km.kosdaq_adv = d.upCount ?? d.up ?? '-';
+    km.kosdaq_dec = d.downCount ?? d.down ?? '-';
+  }
 
-  const market = (kT.status==='fulfilled'&&qT.status==='fulfilled'&&kO.status==='fulfilled'&&qO.status==='fulfilled')
-    ? parseMkt(kT.value, qT.value, kO.value, qO.value)
-    : {};
-
-  const netbuy = {
-    foreign:     fR.status==='fulfilled' ? filterETF(fR.value.output||fR.value.OutBlock_1) : [],
-    institution: iR.status==='fulfilled' ? filterETF(iR.value.output||iR.value.OutBlock_1) : [],
-    nps:         nR.status==='fulfilled' ? filterETF(nR.value.output||nR.value.OutBlock_1) : [],
+  const nb = {
+    foreign:     forR.status==='fulfilled' ? filterETF(forR.value?.result?.list ?? forR.value?.list ?? []) : [],
+    institution: insR.status==='fulfilled' ? filterETF(insR.value?.result?.list ?? insR.value?.list ?? []) : [],
+    nps:         npsR.status==='fulfilled' ? filterETF(npsR.value?.result?.list ?? npsR.value?.list ?? []) : [],
   };
 
-  // ── 렌더링 ───────────────────────────────────────
+  // ── 렌더링 ──────────────────────────────────────
   const IDX_ORDER = ['KOSPI','KOSDAQ','N225','SSEC','FTSE'];
   const CCY_ORDER = ['USDKRW','EURUSD','USDJPY','USDCNH','DXY'];
-  const idx = IDX_ORDER.map(k => [k, indices[k] || {index:'N/A','1D':'N/A','1W':'N/A','1M':'N/A'}]);
-  const ccy = CCY_ORDER.map(k => [k, currencies[k] || {spot:'N/A','1D':'N/A','1W':'N/A','1M':'N/A'}]);
-  const F=netbuy.foreign, I=netbuy.institution, N=netbuy.nps;
-  const km = market;
+  const F=nb.foreign, I=nb.institution, N=nb.nps;
 
-  let t1 = `<table id="t1">
-    <tr>${th('Major Global Indices (pt)',false,5)}<th class="gap"></th>${th('Currency (pt)',false,5)}</tr>
+  let t1 = `<table>
+    <tr>${thEl('Major Global Indices (pt)',false,5)}<th class="gap"></th>${thEl('Currency (pt)',false,5)}</tr>
     <tr class="sub"><th class="L">Category</th><th>Index</th><th>1D</th><th>1W</th><th>1M</th><th class="gap"></th><th class="L">CCY</th><th>Spot</th><th>1D</th><th>1W</th><th>1M</th></tr>`;
-  for (let i=0;i<5;i++) {
-    const [ik,iv]=idx[i], [ck,cv]=ccy[i];
-    t1+=`<tr>${td(ik,true)}${td(iv.index)}${td(iv['1D'])}${td(iv['1W'])}${td(iv['1M'])}<td class="gap"></td>${td(ck,true)}${td(cv.spot)}${td(cv['1D'])}${td(cv['1W'])}${td(cv['1M'])}</tr>`;
+  for (let i=0; i<5; i++) {
+    const iv = indices[IDX_ORDER[i]] || {index:'N/A','1D':'N/A','1W':'N/A','1M':'N/A'};
+    const cv = currencies[CCY_ORDER[i]] || {spot:'N/A','1D':'N/A','1W':'N/A','1M':'N/A'};
+    t1 += `<tr>${tdEl(IDX_ORDER[i],true)}${tdEl(iv.index)}${tdEl(iv['1D'])}${tdEl(iv['1W'])}${tdEl(iv['1M'])}<td class="gap"></td>${tdEl(CCY_ORDER[i],true)}${tdEl(cv.spot)}${tdEl(cv['1D'])}${tdEl(cv['1W'])}${tdEl(cv['1M'])}</tr>`;
   }
   t1 += '</table>';
 
   const KMR = [
-    ['상승 종목 수', km.kospi_adv, km.kosdaq_adv],
-    ['하락 종목 수', km.kospi_dec, km.kosdaq_dec],
-    ['개인 거래대금(억)', km.kospi_ind, km.kosdaq_ind],
-    ['외국인 거래대금(억)', km.kospi_for, km.kosdaq_for],
-    ['기관 거래대금(억)', km.kospi_ins, km.kosdaq_ins],
+    ['상승 종목 수',        km.kospi_adv,  km.kosdaq_adv],
+    ['하락 종목 수',        km.kospi_dec,  km.kosdaq_dec],
+    ['개인 거래대금(억)',   km.kospi_ind,  km.kosdaq_ind],
+    ['외국인 거래대금(억)', km.kospi_for,  km.kosdaq_for],
+    ['기관 거래대금(억)',   km.kospi_ins,  km.kosdaq_ins],
   ];
-  let t2 = `<table id="t2">
-    <tr>${th('Korean Market Indicators',false,3)}<th class="gap"></th>${th('Net buy value (순매수 상위, ETF 제외)',false,3)}</tr>
+  let t2 = `<table>
+    <tr>${thEl('Korean Market Indicators',false,3)}<th class="gap"></th>${thEl('Net buy value (순매수 상위, ETF 제외)',false,3)}</tr>
     <tr class="sub"><th></th><th>KOSPI</th><th>KOSDAQ</th><th class="gap"></th><th class="L">외국인</th><th class="L">기관</th><th class="L">NPS(연기금)</th></tr>`;
-  for (let i=0;i<6;i++) {
+  for (let i=0; i<6; i++) {
     const [lb,kv,qv] = KMR[i]||['','',''];
-    t2+=`<tr>${td(lb,true)}${td(kv)}${td(qv)}<td class="gap"></td>${td(F[i]||'',true)}${td(I[i]||'',true)}${td(N[i]||'',true)}</tr>`;
+    t2 += `<tr>${tdEl(lb,true)}${tdEl(kv)}${tdEl(qv)}<td class="gap"></td>${tdEl(F[i]||'',true)}${tdEl(I[i]||'',true)}${tdEl(N[i]||'',true)}</tr>`;
   }
   t2 += '</table>';
 
   $out.innerHTML = `
     <div class="section"><div class="section-title">지수 · 환율</div>${t1}</div>
     <div class="section"><div class="section-title">한국 시장</div>${t2}</div>
-    ${errors.length ? `<p class="note">⚠ N/A 항목: ${errors.join(', ')} — 해당 날짜 데이터가 없거나 휴장일일 수 있습니다.</p>` : ''}
-  `;
+    ${errors.length ? `<p class="note">⚠ N/A: ${errors.join(', ')}</p>` : ''}`;
+
   setStatus(errors.length ? `완료 (${errors.length}개 N/A)` : '완료 ✓');
 }
 
