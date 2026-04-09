@@ -142,18 +142,44 @@ function parseYF(json, targetDateStr) {
   };
 }
 
-// ── KRX (CORS 우회: https 버전 직접 호출) ───────────────
+// ── 네이버 금융 KOSPI/KOSDAQ ─────────────────────────────
+async function fetchNaverIndex(code, endDate) {
+  // endDate: YYYYMMDD
+  const d = new Date(endDate.slice(0,4)+'-'+endDate.slice(4,6)+'-'+endDate.slice(6,8));
+  const start = new Date(d);
+  start.setDate(start.getDate() - 40);
+  const startStr = start.toISOString().slice(0,10).replace(/-/g,'');
+  const url = `https://m.stock.naver.com/api/index/${code}/price?startTime=${startStr}&endTime=${endDate}&timeframe=day`;
+  const r = await fetch(url, {signal: AbortSignal.timeout(10000)});
+  if (!r.ok) throw new Error('Naver ' + code + ' 오류 ' + r.status);
+  return await r.json();
+}
+
+function parseNaverIndex(rows, targetDate) {
+  if (!rows || !rows.length) return {index:'N/A','1D':'N/A','1W':'N/A','1M':'N/A'};
+  // rows: [{localDate, closePrice, ...}, ...] 최신순 정렬
+  rows.sort((a,b) => b.localDate.localeCompare(a.localDate));
+  // 타겟 날짜 이하 최신
+  const filtered = rows.filter(r => r.localDate <= targetDate);
+  if (!filtered.length) return {index:'N/A','1D':'N/A','1W':'N/A','1M':'N/A'};
+  const base = parseFloat(filtered[0].closePrice);
+  const d1   = filtered[1] ? parseFloat(filtered[1].closePrice) : base;
+  const w1   = filtered[4] ? parseFloat(filtered[4].closePrice) : base;
+  const m1   = filtered[filtered.length-1] ? parseFloat(filtered[filtered.length-1].closePrice) : base;
+  const fc = (a,b) => { const d=+(a-b).toFixed(2); return (d>=0?'+':'')+d.toLocaleString('en',{minimumFractionDigits:2}); };
+  return { index: base.toLocaleString('ko',{minimumFractionDigits:2}), '1D':fc(base,d1), '1W':fc(base,w1), '1M':fc(base,m1) };
+}
+
+// ── KRX 거래대금/순매수 (allorigins 프록시) ──────────────
 async function krxPost(bld, extra={}) {
   const p = new URLSearchParams({bld, locale:'ko_KR', ...extra});
-  // https 버전으로 직접 호출 (CORS 허용됨)
   const url = 'https://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd?' + p;
-  const r = await fetch(url, {
-    method: 'GET',
-    headers: {'Referer': 'https://data.krx.co.kr/'},
-    signal: AbortSignal.timeout(15000)
-  });
-  if (!r.ok) throw new Error('KRX 오류 ' + r.status);
-  return await r.json();
+  const proxied = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+  const r = await fetch(proxied, {signal: AbortSignal.timeout(15000)});
+  if (!r.ok) throw new Error('KRX proxy 오류 ' + r.status);
+  const wrapper = await r.json();
+  if (!wrapper.contents) throw new Error('KRX 빈 응답');
+  return JSON.parse(wrapper.contents);
 }
 
 function d35ago(yyyymmdd) {
@@ -236,12 +262,20 @@ async function run() {
     }
   });
 
-  // 2. KRX 병렬
-  setStatus('<span class="spinner"></span>KRX 데이터 수집 중...');
-  const from = d35ago(date);
-  const [kI,qI,kT,qT,kO,qO,fR,iR,nR] = await Promise.allSettled([
-    krxPost('dbms/MDC/STAT/standard/MDCSTAT00301',{tboxindIdx_finder_equidx0_0:'코스피',indIdx:'1',indIdx2:'001',cboxCond:'D',strtDd:from,endDd:date,share:'1',money:'1'}),
-    krxPost('dbms/MDC/STAT/standard/MDCSTAT00301',{tboxindIdx_finder_equidx0_0:'코스닥',indIdx:'2',indIdx2:'001',cboxCond:'D',strtDd:from,endDd:date,share:'1',money:'1'}),
+  // 2. KOSPI/KOSDAQ → 네이버 금융
+  setStatus('<span class="spinner"></span>KOSPI/KOSDAQ 수집 중...');
+  const [kNav, qNav] = await Promise.allSettled([
+    fetchNaverIndex('KOSPI', date),
+    fetchNaverIndex('KOSDAQ', date),
+  ]);
+  indices['KOSPI']  = kNav.status==='fulfilled' ? parseNaverIndex(kNav.value, date) : {index:'N/A','1D':'N/A','1W':'N/A','1M':'N/A'};
+  indices['KOSDAQ'] = qNav.status==='fulfilled' ? parseNaverIndex(qNav.value, date) : {index:'N/A','1D':'N/A','1W':'N/A','1M':'N/A'};
+  if (kNav.status!=='fulfilled') errors.push('KOSPI');
+  if (qNav.status!=='fulfilled') errors.push('KOSDAQ');
+
+  // 3. KRX 거래대금 + 순매수 병렬
+  setStatus('<span class="spinner"></span>KRX 거래대금/순매수 수집 중...');
+  const [kT,qT,kO,qO,fR,iR,nR] = await Promise.allSettled([
     krxPost('dbms/MDC/STAT/standard/MDCSTAT02302',{mktId:'STK',strtDd:date,endDd:date,share:'3',money:'3'}),
     krxPost('dbms/MDC/STAT/standard/MDCSTAT02302',{mktId:'KSQ',strtDd:date,endDd:date,share:'3',money:'3'}),
     krxPost('dbms/MDC/STAT/standard/MDCSTAT02401',{mktId:'STK',strtDd:date,endDd:date}),
@@ -250,11 +284,6 @@ async function run() {
     krxPost('dbms/MDC/STAT/standard/MDCSTAT03901',{mktId:'ALL',invstTpCd:'3000',strtDd:date,endDd:date,money:'1'}),
     krxPost('dbms/MDC/STAT/standard/MDCSTAT03901',{mktId:'ALL',invstTpCd:'3020',strtDd:date,endDd:date,money:'1'}),
   ]);
-
-  indices['KOSPI']  = kI.status==='fulfilled' ? parseKRXIndex(kI.value) : {index:'N/A','1D':'N/A','1W':'N/A','1M':'N/A'};
-  indices['KOSDAQ'] = qI.status==='fulfilled' ? parseKRXIndex(qI.value) : {index:'N/A','1D':'N/A','1W':'N/A','1M':'N/A'};
-  if (kI.status!=='fulfilled') errors.push('KOSPI');
-  if (qI.status!=='fulfilled') errors.push('KOSDAQ');
 
   const market = (kT.status==='fulfilled'&&qT.status==='fulfilled'&&kO.status==='fulfilled'&&qO.status==='fulfilled')
     ? parseMkt(kT.value, qT.value, kO.value, qO.value)
